@@ -1,32 +1,45 @@
-# friedl-perl-tools
+# tools-perl
 
-Two small, sharp Unix utilities written by **Jeffrey Friedl** in the early 1990s,
-kept alive and running on modern Perl.
+Two small, sharp Unix utilities, `been` and `search`, kept alive and running
+on modern Perl.
+
+## Written by Jeffrey Friedl
+
+**These tools were written by Jeffrey Friedl**, not by us. He wrote them
+between 1991 and 1996 while working at Omron in Kyoto, Japan, and gave them
+away on his homepage with the license line
+*"Copyright 19.... ah hell, just take it."*
+
+Most people know his book without knowing his name: he is the author of
+[*Mastering Regular Expressions*](https://regex.info/book.html) (O'Reilly,
+1997), the book that taught a generation of programmers what a regex actually
+does. Before that he was already writing tools like these, and they were good
+enough that we have run them every single day for thirty years. `been` still
+greets us at login with the birthdays coming up. `search` is still the
+find-plus-grep we reach for first.
+
+**Thank you, Jeffrey.** Everything that is good about these programs is yours.
+The bugs introduced since are ours.
+
+His original Omron page is gone. The complete 1997 collection, exactly as he
+published it, is preserved in [`original/`](original/) from the
+[Wayback Machine](http://web.archive.org/web/19970719143436/http://www.wg.omron.co.jp:80/~jfriedl/perl/index.html).
+He writes today at [regex.info](https://regex.info/blog/).
+
+## The tools
 
 | Tool | What it does | Original |
 |---|---|---|
 | **`been`** | "How long has it been since ___ (or until ___)?" Reads a plain-text file of dates and prints durations, with special handling for birthdays and anniversaries. | 1992–1996 |
 | **`search`** | `find` + `grep` in one command, with Perl regexes, sane default exclusions (binaries, `.git`, `node_modules`…), color highlighting and a full man page. | 1994–1996 |
 
-Both were published on Friedl's Omron homepage
-(`www.wg.omron.co.jp/~jfriedl/perl/`) with the license line
-*"Copyright 19.... ah hell, just take it."* That page is gone; the full
-1997 collection is preserved here in [`original/`](original/) from the
-[Wayback Machine](http://web.archive.org/web/19970719143436/http://www.wg.omron.co.jp:80/~jfriedl/perl/index.html).
-
-Jeffrey Friedl is better known as the author of
-[*Mastering Regular Expressions*](https://regex.info/book.html) (O'Reilly).
-This repository exists to give credit where it is due and to keep two
-genuinely useful tools installable in 2026. Everything that is good
-about them is his. The bugs introduced since are ours.
-
 ## Install
 
 Requires Perl 5.10 or newer (any Linux or macOS has it). No CPAN modules.
 
 ```bash
-git clone https://github.com/cdamken/friedl-perl-tools.git
-cd friedl-perl-tools
+git clone https://github.com/cdamken/tools-perl.git
+cd tools-perl
 sudo ./install.sh          # -> /usr/local/bin, man pages -> /usr/local/man/man1
 ```
 
@@ -102,4 +115,5 @@ replacements, so they are not maintained here.
 
 Jeffrey Friedl released the originals with *"ah hell, just take it."*
 Modifications by Carlos Damken are under the [MIT License](LICENSE).
-If you are Jeffrey Friedl and want anything changed here, open an issue.
+If you are Jeffrey Friedl and want anything changed here, open an issue and
+it will be done.
