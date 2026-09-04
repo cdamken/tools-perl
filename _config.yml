@@ -1,4 +1,0 @@
-title: tools-perl
-description: been and search, written by Jeffrey Friedl, kept alive on modern Perl
-theme: jekyll-theme-minimal
-exclude: [original/, install.sh, bin/, man/]
