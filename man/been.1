@@ -1,0 +1,266 @@
+.TH been 1 "June 1992"
+.SH NAME
+been \- show how long it's been since (or until) events.
+.SH SYNOPSIS
+been [options] [patterns|files...]
+.SH DESCRIPTION
+.I Been
+reads the named files ("$HOME/.been" if none specified) and extracts
+information about when events occured (or will occur), and prints
+the duration since (until) the event.
+.PP
+If there are arguments that are not valid valid filenames, they are
+taken to be perl regular expressions. The
+.B \-a
+option is implied, and only output lines matching the (case insensative)
+regular expression(s) are printed.
+.PP
+Lines in the examined files are of the general format:
+.nf
+
+   <date> : <flags> : <text>
+
+For example, the lines
+
+	July 4th, 1776 : : America was born.
+	1/1/2000       : : the turn of the century.
+
+.fi
+would result (if run on July 3rd, 1992) with the output:
+.nf
+
+	215 years, 11 months, 30 days since America was born.
+	7 years, 5 months, 29 days until the turn of the century.
+
+.fi
+Commets (beginning with '#') and blank lines are ignored.
+.SH CALENDER
+Various programs, such as "calender" (old reminder system) and "pscal"
+(generates postscript calenders) read the file ``~/calender'' for date
+information. The format for ~/calender is not expressive enough for reasonable
+use with
+.IR been ,
+but in an effort to not dupilcate data files, "been -c" will produce as
+output in a format suitable for ~/calender. Further details of this
+process are discussed in a later section.
+.SH DATES
+The date may be given in a variety of formats. All the following refer to
+the same date:
+.nf
+
+      April 12, 1966
+      4/12/66
+      4-12-66
+      66.4.12
+      12-Apr-66
+      12 Apr 66
+
+.fi
+Furthermore, years may be given in Japanese dates with
+prepended 'S' or 'H' for the Showa or Heisei eras, i.e.:
+.nf
+
+      S41.4.12
+      April 12, S41
+
+.fi
+Two-digit years are interpreted as 20xx, except that birthdays and
+anniversaries are always placed in the past and other events at most
+20 years in the future (so "4/12/66" is 1966, "1/1/30" is 2030).
+.PP
+In all cases, the year may be omitted, in which case it is always some time
+until the next occurance of that date. Therefore, the line
+.nf
+
+  25 Dec:: Christmas.
+
+.fi
+would always refer to the "next" Christmas.
+Dec 25.
+.SH FLAGS
+There are two types of flags for the main use of
+.IR been ,
+with additional flags for "been -c" calender processing.
+One type indicates how the line as a whole is
+to be printed. The flags "birthday" (or "bday"), "anniversary" (or "anniv"),
+and "annual" indicate special treatment of yearly events that have occured
+since a specific time (such as birthdays). For example,
+.nf
+
+  30 Apr 1961 :             : Mom & Dad's marriage
+  30 Apr 1961 : anniversary : Mom & Dad's marriage
+  30 Apr 1961 : annual      : Mom & Dad's anniversary
+   1 Jan 1966 :             : Joe Smith was born.
+   1 Jan 1966 : birthday    : Joe Smith
+   1 Jan 1966 : annual      : Joe Smith's birthday
+
+might produce
+
+  31 years, 11 months, 23 days since Mom & Dad's marriage
+  7 days until anniversary of Mom & Dad's marriage (32 on Apr 30, 1993)
+  7 days until Mom & Dad's anniversary (32 on Apr 30, 1993)
+  27 years, 11 days since Joe Smith was born.
+  8 months, 9 days until birthday of Joe Smith (28 on Apr 12, 1994)
+  8 months, 9 days until Joe Smith's birthday (28 on Apr 12, 1994)
+.fi
+
+As you can see, "birthday" and "anniversary" are just special cases
+of "annual".  Lines with these flags are treated as lines without years
+(i.e. always looking forward to the next such date), but the number of years
+that have passed is printed.
+
+These flags can be used without years, but (of course) the number of years
+passed can't be printed. The lines
+.nf
+
+  12 Apr : birthday : Jeffrey Friedl
+  12 Apr :          : birthday of Jeffrey Friedl
+
+produce the same output
+
+  11 months, 20 days until birthday of Jeffrey Friedl
+  11 months, 20 days until birthday of Jeffrey Friedl
+.fi
+
+Finally, for lines with these types of flags, the date can have a question
+mark in it if you are unsure about the year. In such cases, the number of
+years is also printed with a question mark. So, for example, if you weren't
+sure exactly what year someone was born, you might have a line such as:
+.nf
+  May 10, 1955? : birthday : my friend
+
+producing something like
+
+  17 days until birthday of my friend (38? on May 10, 1993)
+.fi
+
+Another type of flag indicates when a line is to be printed.  Flags of the
+form (where '#' are numbers) "#y", "#m", "#w", and "#d" indicate that the
+line shouldn't be printed unless the date of the line is within that number
+of years, months, weeks, or days respectively.
+
+So, for example, a flag of "2w" indicates that the line won't be reported
+until two weeks before the line's date, and will be reported until two weeks
+after the date.
+
+As a special case, dates that have no year, or dates for annual things
+(birthdays, etc.) are reported only before the date (since they are always
+looking forward to the next occurance of that date).
+
+For example, you might have lines such as
+.nf
+
+   Oct  3, 1994: 1m : driver's licence expires.
+   May  7, 1997: 3m : passport licence expires. # contact embasy
+   Dec 11, 1955: 2w birthday: Diane Chomo
+   Mar  3, 1994: 2d : give Bob a call... tell him "good luck" # big test!
+.fi
+
+Lines you want printed always would simply not have a time-limiter flag.
+If you would like to "archive" dates.... have them available but normally
+ignored, you can put a zero-limit (such as "0d"). Such dates will be
+printed *only* when the "-a" flag (see below) is given.  For example,
+.nf
+
+  10 May 1933: 0d : company "Omron" founded.
+.fi
+
+Use of zero-limit flags bypasses the normal date checking when "-a" is not
+given, and is thus quicker for normal use.
+
+For use with "been -c", the flag "no-cal" (or "nocal") means that the
+line should be ignored for "been -c", while "cal-only" (or "calonly) means
+that it should be ignored except for "been -c".  The flag "holiday" causes
+an asterisk to be printed after the date in the output. This tells
+the "pscal" that the date is to be printed in gray (to indicate a holiday).
+.SH OPTIONS
+.TP
+.B \-a
+show all lines (ignore limit flags).
+.TP
+.B \-s
+Sort the output, most-past (or least-future) event first.
+.TP
+.B \-r
+Sort the output, reversed (most future event first).
+.TP
+.B \-i
+Ignore "annual", "birthday", etc. flags. Print all dates with years
+as "XXX since/until YYY".
+.TP
+.BI \-f [limit]
+Include only future events in the output.
+If
+.IR limit ,
+(which is in the same form as the "2w" example flag above),
+is indicated, all future events within the limit are shown.
+.TP
+.BI \-p [limit]
+Include only past events in the output.
+If
+.I limit
+is indicated, all past events within the limit are shown.
+.TP
+.B \-k
+Enable colorized output. Durations are shown in yellow, future events in green, and past events in cyan.
+.TP
+.B \-v
+Print the version and exit.
+.TP
+.B \-d
+Include a line giving today's date at the end of the output (or in the
+appropriate spot if the output is sorted).
+.TP
+.B \-c
+Output is of the format of ~/calender, such that one could
+.nf
+
+       % been -c > ~/calender
+.fi
+
+All birthdays and other annual events are slated for their next occurance
+(i.e. the calender file will be good for the next year), with ages for
+birthdays being printed.  So, for example, the .been line
+.nf
+
+        12 Apr 1966 : 2w birthday : Jeffrey Friedl
+.fi
+
+would cause a line such as
+.nf
+
+        4/12/1994 Jeffrey Friedl (28)
+.fi
+
+to be output. This is fine until after 1994, after which "been -c" must be
+run again to produce the next year's calender file.
+
+The alternate format "been -cc" would remove years (and ages) from birthday
+and other annual entries, such that the output might be like
+.nf
+
+        4/12 Jeffrey Friedl
+.fi
+
+which would be useful for all subsequent years.
+.SH "OPTIONS LINE"
+The .been datafile can have a line or lines of the form
+.nf
+
+  options: <flags>
+.fi
+
+which set the given flags at that point in the file.  The author has found
+the line
+.nf
+
+   options: sd
+.fi
+
+useful.
+.SH BUGS
+Generally slow for large differences.
+.br
+Would still like to have more control over the output format.
+.SH AUTHOR
+Jeffrey Friedl, Omron Corp (jfriedl@omron.co.jp)
